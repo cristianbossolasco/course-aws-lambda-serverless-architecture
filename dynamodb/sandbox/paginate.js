@@ -9,31 +9,30 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 var startKey = [];
 var results = [];
 var pages = 0;
-
 async.doWhilst(
-    // iterate
-    (callback) => {
+    //iteratee
+    (callback)=>{
         let params = {
-            TableName: "td_notes",
-            Limit: 3 // limit of items per page
+            TableName: 'td_notes',
+            Limit: 3
         };
 
-        if (!_.isEmpty(startKey)) {
+        if(!_.isEmpty(startKey)) {
             params.ExclusiveStartKey = startKey;
         }
 
-        docClient.scan(params, (err, data)=> {
-            if (err) {
+        docClient.scan(params, (err, data)=>{
+            if(err) {
                 console.log(err);
                 callback(err, {});
             } else {
-                if (typeof data.LastEvaluatedKey !== 'undefined') {
+                if(typeof data.LastEvaluatedKey !== 'undefined') {
                     startKey = data.LastEvaluatedKey;
                 } else {
                     startKey = [];
                 }
 
-                if (!_.isEmpty(data.Items)){
+                if(!_.isEmpty(data.Items)){
                     results = _.union(results, data.Items);
                 }
 
@@ -43,18 +42,19 @@ async.doWhilst(
             }
         });
     },
-    // truth test
-    () => {
+
+    //truth test
+    (results, callback)=>{
         if(_.isEmpty(startKey)) {
-            return false;
+            return callback(null, false);;
         } else {
-            return true;
+            return callback(null, true);
         }
     },
 
-    // callback function
+    //callback
     (err, data) => {
-        if (err) {
+        if(err) {
             console.log(err);
         } else {
             console.log(data);
@@ -62,4 +62,4 @@ async.doWhilst(
             console.log("Pages", pages);
         }
     }
-)
+);
