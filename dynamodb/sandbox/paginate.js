@@ -9,7 +9,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 var startKey = [];
 var results = [];
 var pages = 0;
-async.doWhilst(
+async.doWhilst( 
     //iteratee
     (callback)=>{
         let params = {
